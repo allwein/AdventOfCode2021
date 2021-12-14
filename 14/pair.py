@@ -10,7 +10,7 @@ pairs = []
 
 def processFile():
     global polymer
-    with open('input.txt', 'r',-1,"utf-8") as listing:
+    with open('input2.txt', 'r',-1,"utf-8") as listing:
         index = 0
         for line in listing.readlines():
             if len(line.strip()) == 0:
@@ -27,25 +27,29 @@ def processFile():
         for i in range(10):
             processPairs()
 
-        start = ord("A")
-        counts=[]
-        for i in range(26):
-            counts.append(0)
+            start = ord("A")
+            counts=[]
+            for i in range(26):
+                counts.append(0)
 
-        for character in polymer:
-            value = ord(character) - start
-            counts[value] = counts[value] + 1
+            for character in polymer:
+                value = ord(character) - start
+                counts[value] = counts[value] + 1
 
-        mostCommon = 0
-        leastCommon = 999999999
-        for value in range(26):
-            if counts[value] > mostCommon:
-                mostCommon = counts[value]
+            for character in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+                if counts[ord(character) - start] > 0:
+                    print (character + ": " + str(counts[ord(character) - start]))
 
-            if counts[value] < leastCommon and counts[value] > 0:
-                leastCommon = counts[value]
+            mostCommon = 0
+            leastCommon = 999999999
+            for value in range(26):
+                if counts[value] > mostCommon:
+                    mostCommon = counts[value]
 
-        print("Result is " + str(mostCommon - leastCommon))
+                if counts[value] < leastCommon and counts[value] > 0:
+                    leastCommon = counts[value]
+
+            print("Result is " + str(mostCommon - leastCommon))
 
         
         
