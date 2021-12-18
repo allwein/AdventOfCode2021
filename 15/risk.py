@@ -32,7 +32,7 @@ def dijkstra(graph, start_vertex):
     return D        
 
 def processFile():
-    with open('input2.txt', 'r',-1,"utf-8") as listing:
+    with open('input.txt', 'r',-1,"utf-8") as listing:
         lines = []
         for line in listing.readlines():
             line = line.strip()
@@ -41,60 +41,50 @@ def processFile():
                 numberLine.append(int(character))
             lines.append(numberLine)
 
-        square = len(lines[0])
-        graph = Graph(square * square * 25)
+        square = len(lines[0]) * 5
+        graph = Graph(square * square)
+        expandLines(lines)
+        addCosts(graph, lines, square)
 
-        lines2 = mutateLines(lines)
-        lines3 = mutateLines(lines2)
-        lines4 = mutateLines(lines3)
-        lines5 = mutateLines(lines4)
-        lines6 = mutateLines(lines5)
-        lines7 = mutateLines(lines6)
-        lines8 = mutateLines(lines7)
-        lines9 = mutateLines(lines8)
-
-        addCosts(graph, lines, square, 0, 0)
-        addCosts(graph, lines2, square, 0,  1)
-        addCosts(graph, lines3, square, 0,  2)
-        addCosts(graph, lines4, square, 0, 3)
-        addCosts(graph, lines5, square, 0,  4)
-
-        addCosts(graph, lines2, square, square * 1, 0)
-        addCosts(graph, lines3, square, square * 1, 1)
-        addCosts(graph, lines4, square, square * 1, 2)
-        addCosts(graph, lines5, square, square * 1, 3)
-        addCosts(graph, lines6, square, square * 1, 4)
-
-        addCosts(graph, lines3, square, square * 2, 0)
-        addCosts(graph, lines4, square, square * 2, 1)
-        addCosts(graph, lines5, square, square * 2, 2)
-        addCosts(graph, lines6, square, square * 2, 3)
-        addCosts(graph, lines7, square, square * 2, 4)
-
-        addCosts(graph, lines4, square, square * 3, 0)
-        addCosts(graph, lines5, square, square * 3, 1)
-        addCosts(graph, lines6, square, square * 3, 2)
-        addCosts(graph, lines7, square, square * 3, 3)
-        addCosts(graph, lines8, square, square * 3, 4)
-
-        addCosts(graph, lines5, square, square * 4, 0)
-        addCosts(graph, lines6, square, square * 4, 1)
-        addCosts(graph, lines7, square, square * 4, 2)
-        addCosts(graph, lines8, square, square * 4, 3)
-        addCosts(graph, lines9, square, square * 4, 4)
-
+        # for line in lines:
+        #     for number in line:
+        #         print(number,end="")
+        #     print()
+        # print(len(lines))
+        #print(lines)
         #print(graph.edges)
         result = dijkstra(graph,0)
         #print(result)
         print("Result for last vertex is: " + str(result[graph.v-1]))
 
-def addCosts(graph, lines, square, xoffset, yoffset):
+def expandLines(lines):
+    originalLineLength = len(lines[0])
+    for line in lines:
+        mutateLine(line)
+
+    for i in range(5):
+        skipIndex = i * originalLineLength
+      #  print("beforemutate " + str(len(lines)))
+        for index in range(len(lines)):
+           # print("\tskip index = " + str(skipIndex))
+           # print("\tactual index = " + str(index))
+            if index < skipIndex:
+                continue
+            else:
+                mutateLineDown(lines, lines[index])
+               # print("\t\tafter mutate " + str(len(lines)))
+
+def addCosts(graph, lines, square):
         for i in range(square):
+            # print(square)
+            # print(i)
+            # print(len(lines))
+            # print()
             line = lines[i]
             for j in range(square):
                 cost = line[j]
-                currentVertex = i * square + j + xoffset + (yoffset * square * square * 5)
-                print(currentVertex)
+                currentVertex = i * square + j
+                #print(currentVertex)
                 #left
                 if j > 0:
                     graph.add_cost(currentVertex-1 ,currentVertex ,int(cost))
@@ -110,6 +100,29 @@ def addCosts(graph, lines, square, xoffset, yoffset):
                 #down
                 if i < square-1:
                     graph.add_cost(currentVertex+square ,currentVertex ,int(cost))
+
+def mutateLineDown(lines, line):
+    length = len(line)
+    newLine = []
+    for j in range(length):
+        offset = j
+        updatedValue = int(line[offset]) + 1
+        if updatedValue > 9:
+            updatedValue = 1
+        newLine.append(updatedValue)
+    
+    lines.append(newLine)
+
+def mutateLine(line):
+    length = len(line)
+    for i in range(4):
+        for j in range(length):
+            offset = i * length + j
+            updatedValue = int(line[offset]) + 1
+            if updatedValue > 9:
+                updatedValue = 1
+            line.append(updatedValue)
+
 
 
 def mutateLines(lines):
